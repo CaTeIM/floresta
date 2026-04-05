@@ -1,5 +1,5 @@
 # Usa a base oficial sem trava de hash para suportar arm64 nativamente
-FROM debian:trixie-slim AS builder
+FROM debian:13.2-slim@sha256:18764e98673c3baf1a6f8d960b5b5a1ec69092049522abac4e24a7726425b016 AS builder
 
 ARG BUILD_FEATURES=""
 
@@ -35,7 +35,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     fi
 
 # Imagem final, limpa e multiplataforma
-FROM debian:trixie-slim
+FROM debian:13.2-slim@sha256:18764e98673c3baf1a6f8d960b5b5a1ec69092049522abac4e24a7726425b016
 
 COPY --from=builder /opt/app/target/release/florestad /usr/local/bin/florestad
 COPY --from=builder /opt/app/target/release/floresta-cli /usr/local/bin/floresta-cli
