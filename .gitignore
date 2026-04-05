@@ -1,0 +1,15 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editores / IDEs
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+
+# Se você clonar o código do floresta localmente para fuçar, não comitar junto
+floresta/
+target/

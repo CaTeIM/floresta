@@ -1,0 +1,12 @@
+services:
+  floresta:
+    image: cateim/floresta:latest
+    container_name: Floresta
+    command: florestad -c /data/config.toml --data-dir /data/.floresta
+    ports:
+      - 50001:50001
+      - 8332:8332
+    volumes:
+      - /path/to/config/floresta.toml:/data/config.toml
+      - /path/to/utreexo:/data/.floresta
+    restart: unless-stopped
