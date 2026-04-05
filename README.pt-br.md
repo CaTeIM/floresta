@@ -4,15 +4,15 @@
 ![Docker Hub Pulls](https://img.shields.io/docker/pulls/cateim/floresta?style=for-the-badge)
 ![Docker Image Size](https://img.shields.io/docker/image-size/cateim/floresta/latest?style=for-the-badge)
 
-*[🇧🇷 Leia em Português](README.pt-br.md)*
+*[🇺🇸 Read in English](README.md)*
 
-Automated multi-architecture (`amd64` and `arm64`) Docker build for the [Floresta](https://github.com/getfloresta/floresta) Bitcoin full node. 
+Build automatizado multiplataforma (`amd64` e `arm64`) para o full node Bitcoin [Floresta](https://github.com/getfloresta/floresta). 
 
-This image compiles the node from the official source code with the **metrics feature enabled**, allowing detailed node monitoring via Prometheus and Grafana natively.
+Esta imagem compila o node a partir do código-fonte oficial com a feature de **métricas habilitada**, permitindo o monitoramento detalhado do nó via Prometheus e Grafana nativamente.
 
-## 📂 Server Directory Structure
+## 📂 Estrutura de Diretórios no Servidor
 
-This setup is designed to run in the `/srv/floresta/` directory on the host. Before deploying the stack, create the necessary folders:
+Este setup foi desenhado para rodar no diretório `/srv/floresta/` no host. Antes de subir o stack, crie as pastas necessárias:
 
 ```bash
 mkdir -p /srv/floresta/config
@@ -21,17 +21,17 @@ mkdir -p /srv/floresta/metrics/prometheus
 mkdir -p /srv/floresta/metrics/grafana
 ```
 
-## 📄 Required Configuration Files
+## 📄 Arquivos de Configuração Necessários
 
-Create the following files inside the directories you just created on your server.
+Crie os arquivos abaixo dentro das pastas que você acabou de criar no servidor.
 
-**1. Floresta configuration file** (can be empty at first, just so Docker creates a file instead of a directory):
+**1. Arquivo de configuração do Floresta** (pode ficar vazio no início, serve para o Docker não criar um diretório no lugar do arquivo):
 `/srv/floresta/config/floresta.toml`
 ```bash
 touch /srv/floresta/config/floresta.toml
 ```
 
-**2. Prometheus configuration:**
+**2. Configuração do Prometheus:**
 `/srv/floresta/metrics/prometheus/prometheus.yml`
 ```yaml
 global:
@@ -50,7 +50,7 @@ scrape_configs:
           - floresta:3333
 ```
 
-**3. Grafana Datasource configuration:**
+**3. Configuração de Fonte de Dados do Grafana:**
 `/srv/floresta/metrics/grafana/datasource.yml`
 ```yaml
 apiVersion: 1
@@ -64,9 +64,9 @@ datasources:
     editable: true
 ```
 
-## 🚀 Running the Stack
+## 🚀 Subindo o Stack
 
-Create your root `docker-compose.yml` file on the server:
+Crie o seu arquivo `docker-compose.yml` raiz no servidor:
 `/srv/floresta/docker-compose.yml`
 
 ```yaml
@@ -108,7 +108,7 @@ services:
       - /srv/floresta/metrics/grafana:/etc/grafana/provisioning/datasources
 ```
 
-Start the services:
+Inicie os serviços:
 
 ```bash
 cd /srv/floresta
@@ -116,11 +116,11 @@ docker compose pull
 docker compose up -d
 ```
 
-## 📊 Access and Ports
+## 📊 Acessos e Portas
 
 * **Electrum Server:** `50001`
 * **RPC Server:** `8332`
-* **Internal Metrics:** `3333`
-* **Grafana Dashboard:** `http://<SERVER-IP>:3000` 
-  * **User:** `admin`
-  * **Password:** `grafana`
+* **Métricas Internas:** `3333`
+* **Grafana Dashboard:** `http://<IP-DO-SERVIDOR>:3000` 
+  * **Usuário:** `admin`
+  * **Senha:** `grafana`
