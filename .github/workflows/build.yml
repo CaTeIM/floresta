@@ -2,6 +2,8 @@ name: Docker Publish
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 2 * * *' # Roda todos os dias às 02:00 UTC
 
 env:
   IMAGE_NAME: cateim/floresta
@@ -11,35 +13,60 @@ jobs:
     runs-on: ubuntu-24.04-arm
     
     steps:
+      - name: Pega a última release do Floresta
+        id: get_release
+        run: |
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/getfloresta/floresta/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+          echo "LATEST_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
+          echo "Versão mais recente oficial: $LATEST_VERSION"
+
+      - name: Checa se a imagem já existe no Docker Hub
+        id: check_image
+        run: |
+          if curl -sLf https://hub.docker.com/v2/repositories/${{ env.IMAGE_NAME }}/tags/${{ env.LATEST_VERSION }} > /dev/null; then
+            echo "A imagem ${{ env.LATEST_VERSION }} já existe no seu Docker Hub. Pulando o build."
+            echo "BUILD_NEEDED=false" >> $GITHUB_ENV
+          else
+            echo "Versão nova detectada! Iniciando o build..."
+            echo "BUILD_NEEDED=true" >> $GITHUB_ENV
+          fi
+
       - name: Checkout
+        if: env.BUILD_NEEDED == 'true'
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
+        if: env.BUILD_NEEDED == 'true'
         uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
+        if: env.BUILD_NEEDED == 'true'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Gera as tags dinamicamente
+      - name: Gera as tags dinamicamente (latest e versão)
+        if: env.BUILD_NEEDED == 'true'
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest
-            type=sha,prefix=sha-,suffix=,format=short
+            type=raw,value=${{ env.LATEST_VERSION }}
 
       - name: Build and push
+        if: env.BUILD_NEEDED == 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
           push: true
           platforms: linux/arm64
-          build-args: BUILD_FEATURES=metrics
+          build-args: |
+            BUILD_FEATURES=metrics
+            FLORESTA_VERSION=${{ env.LATEST_VERSION }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha

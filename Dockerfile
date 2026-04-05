@@ -1,7 +1,8 @@
-# Usa a base oficial sem trava de hash para suportar arm64 nativamente
+# Usa a base oficial do Floresta
 FROM debian:13.2-slim@sha256:18764e98673c3baf1a6f8d960b5b5a1ec69092049522abac4e24a7726425b016 AS builder
 
 ARG BUILD_FEATURES=""
+ARG FLORESTA_VERSION="master"
 
 # Instala as dependências de compilação
 RUN apt-get update && apt-get install -y \
@@ -23,8 +24,8 @@ RUN rustup default 1.81.0
 
 WORKDIR /opt/app
 
-# Baixa o código fonte oficial do Floresta mais recente na hora do build
-RUN git clone https://github.com/getfloresta/floresta.git .
+# Baixa o código fonte oficial do Floresta na versão específica
+RUN git clone --branch ${FLORESTA_VERSION} https://github.com/getfloresta/floresta.git .
 
 # Compila o projeto
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
@@ -34,7 +35,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     cargo build --release; \
     fi
 
-# Imagem final, limpa e multiplataforma
+# Imagem final e limpa
 FROM debian:13.2-slim@sha256:18764e98673c3baf1a6f8d960b5b5a1ec69092049522abac4e24a7726425b016
 
 COPY --from=builder /opt/app/target/release/florestad /usr/local/bin/florestad

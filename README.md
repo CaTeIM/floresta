@@ -1,4 +1,4 @@
-# 🐳 Floresta Bitcoin Node - Multi-Arch Docker
+# Floresta Bitcoin Node - ARM64 Docker 🌳₿🐳
 
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/CaTeIM/floresta-docker/build.yml?branch=main&style=for-the-badge)
 ![Docker Hub Pulls](https://img.shields.io/docker/pulls/cateim/floresta?style=for-the-badge)
@@ -6,7 +6,7 @@
 
 *[🇧🇷 Leia em Português](README.pt-br.md)*
 
-Automated multi-architecture (`amd64` and `arm64`) Docker build for the [Floresta](https://github.com/getfloresta/floresta) Bitcoin full node. 
+Automated `arm64` Docker build for the [Floresta](https://github.com/getfloresta/floresta) Bitcoin full node. 
 
 This image compiles the node from the official source code with the **metrics feature enabled**, allowing detailed node monitoring via Prometheus and Grafana natively.
 
