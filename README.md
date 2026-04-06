@@ -10,6 +10,12 @@ Automated `arm64` Docker build for the [Floresta](https://github.com/getfloresta
 
 This image compiles the node from the official source code with the **metrics feature enabled**, allowing detailed node monitoring via Prometheus and Grafana natively.
 
+## 📚 Source Code
+
+This is an open-source project. The `Dockerfile`, startup script, and GitHub Actions build workflow are all available in the project repository.
+
+➡️ **[GitHub Repository: CaTeIM/floresta](https://github.com/CaTeIM/floresta)**
+
 ## 📂 Server Directory Structure
 
 This setup is designed to run in the `/srv/floresta/` directory on the host. Before deploying the stack, create the necessary folders:
@@ -79,9 +85,12 @@ services:
       - 50001:50001
       - 8332:8332
       - 3333:3333
+    environment:
+      - TZ=America/Sao_Paulo
     volumes:
       - /srv/floresta/config/floresta.toml:/data/config.toml
       - /srv/floresta/utreexo:/data/.floresta
+      - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
 
   prometheus:
@@ -91,9 +100,12 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
     ports:
       - 9090:9090
+    environment:
+      - TZ=America/Sao_Paulo
     restart: unless-stopped
     volumes:
       - /srv/floresta/metrics/prometheus:/etc/prometheus
+      - /etc/localtime:/etc/localtime:ro
 
   grafana:
     image: grafana/grafana
@@ -104,9 +116,11 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=grafana
+      - TZ=America/Sao_Paulo
     volumes:
       - /srv/floresta/metrics/grafana:/etc/grafana/provisioning/datasources
       - grafana_data:/var/lib/grafana
+      - /etc/localtime:/etc/localtime:ro
 
 volumes:
   grafana_data:

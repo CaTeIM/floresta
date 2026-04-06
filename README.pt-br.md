@@ -10,6 +10,12 @@ Build automatizado `arm64` para o full node Bitcoin [Floresta](https://github.co
 
 Esta imagem compila o node a partir do código-fonte oficial com a feature de **métricas habilitada**, permitindo o monitoramento detalhado do nó via Prometheus e Grafana nativamente.
 
+## 📚 Source Code
+
+Este é um projeto de código aberto. O `Dockerfile`, script de inicialização e o workflow de build do GitHub Actions estão todos disponíveis no repositório do projeto.
+
+➡️ **[GitHub Repository: CaTeIM/floresta](https://github.com/CaTeIM/floresta)**
+
 ## 📂 Estrutura de Diretórios no Servidor
 
 Este setup foi desenhado para rodar no diretório `/srv/floresta/` no host. Antes de subir o stack, crie as pastas necessárias:
@@ -79,9 +85,12 @@ services:
       - 50001:50001
       - 8332:8332
       - 3333:3333
+    environment:
+      - TZ=America/Sao_Paulo
     volumes:
       - /srv/floresta/config/floresta.toml:/data/config.toml
       - /srv/floresta/utreexo:/data/.floresta
+      - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
 
   prometheus:
@@ -91,9 +100,12 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
     ports:
       - 9090:9090
+    environment:
+      - TZ=America/Sao_Paulo
     restart: unless-stopped
     volumes:
       - /srv/floresta/metrics/prometheus:/etc/prometheus
+      - /etc/localtime:/etc/localtime:ro
 
   grafana:
     image: grafana/grafana
@@ -104,9 +116,11 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=grafana
+      - TZ=America/Sao_Paulo
     volumes:
       - /srv/floresta/metrics/grafana:/etc/grafana/provisioning/datasources
       - grafana_data:/var/lib/grafana
+      - /etc/localtime:/etc/localtime:ro
 
 volumes:
   grafana_data:
