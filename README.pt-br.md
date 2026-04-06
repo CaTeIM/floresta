@@ -1,8 +1,8 @@
 # Floresta Bitcoin Node - ARM64 Docker 🌳₿🐳
 
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/CaTeIM/floresta-docker/build.yml?branch=main&style=for-the-badge)
-![Docker Hub Pulls](https://img.shields.io/docker/pulls/cateim/floresta?style=for-the-badge)
-![Docker Image Size](https://img.shields.io/docker/image-size/cateim/floresta/latest?style=for-the-badge)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/CaTeIM/floresta/build.yml?branch=master)
+![Docker Hub Pulls](https://img.shields.io/docker/pulls/cateim/floresta)
+![Docker Image Size](https://img.shields.io/docker/image-size/cateim/floresta/latest)
 
 *[🇺🇸 Read in English](README.md)*
 
@@ -106,7 +106,10 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=grafana
     volumes:
       - /srv/floresta/metrics/grafana:/etc/grafana/provisioning/datasources
-      - /srv/floresta/metrics/grafana:/var/lib/grafana
+      - grafana_data:/var/lib/grafana
+
+volumes:
+  grafana_data:
 ```
 
 Inicie os serviços:
