@@ -106,6 +106,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=grafana
     volumes:
       - /srv/floresta/metrics/grafana:/etc/grafana/provisioning/datasources
+      - /srv/floresta/metrics/grafana:/var/lib/grafana
 ```
 
 Start the services:
