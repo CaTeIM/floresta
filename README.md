@@ -33,8 +33,29 @@ Create the following files inside the directories you just created on your serve
 
 **1. Floresta configuration file** (can be empty at first, just so Docker creates a file instead of a directory):
 `/srv/floresta/config/floresta.toml`
-```bash
-touch /srv/floresta/config/floresta.toml
+```yaml
+# Node Network Settings
+[network]
+# Defines the network (bitcoin, testnet, signet, regtest)
+network = "bitcoin"
+
+# Electrum Server Settings
+[electrum]
+# 0.0.0.0 allows the server to serve requests from outside the container
+address = "0.0.0.0:50001"
+
+# RPC Server Settings (optional, if used)
+[rpc]
+address = "0.0.0.0:8332"
+
+# Wallet Settings (optional - watch-only)
+[wallet]
+xpubs = [
+    "xpub_your_key_here..."
+]
+descriptors = [
+    "wpkh([fingerprint]xpub...)..."
+]
 ```
 
 **2. Prometheus configuration:**
@@ -80,7 +101,7 @@ services:
   floresta:
     image: cateim/floresta:latest
     container_name: floresta
-    command: florestad -c /data/config.toml --data-dir /data/.floresta
+    command: florestad -c /data/config.toml --data-dir /data/.floresta --electrum-address 0.0.0.0:50001 --rpc-address 0.0.0.0:8332
     ports:
       - 50001:50001
       - 8332:8332
@@ -92,6 +113,8 @@ services:
       - /srv/floresta/utreexo:/data/.floresta
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
 
   prometheus:
     image: prom/prometheus
@@ -103,6 +126,8 @@ services:
     environment:
       - TZ=America/Sao_Paulo
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     volumes:
       - /srv/floresta/metrics/prometheus:/etc/prometheus
       - /etc/localtime:/etc/localtime:ro
@@ -113,6 +138,8 @@ services:
     ports:
       - 3000:3000
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=grafana

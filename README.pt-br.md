@@ -33,8 +33,30 @@ Crie os arquivos abaixo dentro das pastas que você acabou de criar no servidor.
 
 **1. Arquivo de configuração do Floresta** (pode ficar vazio no início, serve para o Docker não criar um diretório no lugar do arquivo):
 `/srv/floresta/config/floresta.toml`
-```bash
-touch /srv/floresta/config/floresta.toml
+```yaml
+# Configurações de Rede do Nó
+[network]
+# Define a rede (bitcoin, testnet, signet, regtest)
+network = "bitcoin"
+
+# Configurações do Servidor Electrum
+[electrum]
+# 0.0.0.0 permite que o servidor atenda requisições de fora do container
+address = "0.0.0.0:50001"
+
+# Configurações do Servidor RPC (opcional, se for usar)
+[rpc]
+address = "0.0.0.0:8332"
+default_cookie_file = "/data/cookie"
+
+# Configurações da Carteira (opcional - watch-only)
+[wallet]
+xpubs = [
+    "xpub_sua_chave_aqui..."
+]
+descriptors = [
+    "wpkh([fingerprint]xpub...)..."
+]
 ```
 
 **2. Configuração do Prometheus:**
@@ -80,7 +102,7 @@ services:
   floresta:
     image: cateim/floresta:latest
     container_name: floresta
-    command: florestad -c /data/config.toml --data-dir /data/.floresta
+    command: florestad -c /data/config.toml --data-dir /data/.floresta --electrum-address 0.0.0.0:50001 --rpc-address 0.0.0.0:8332
     ports:
       - 50001:50001
       - 8332:8332
